@@ -133,7 +133,6 @@ if not ok then
     ngx.say(string.format("error accur. %s", is_in))
 end
 
-bloomfilter.DestroyBF(bf)
 ```
 
 
