@@ -135,33 +135,6 @@ typedef struct {
 } BloomFilter;
 
 
-/*int8_t GET_BITSETHEADER_MAGIC(BitSetHeader *bitset)
-{
-    return bitset->magic;
-}
-void SET_GITSETHEADER_MAGIC(BitSetHeader *bitset, int8_t magic)
-{
-    bitset->magic = magic;
-}
-
-uint8_t GET_BITSETHEADER_HASHNUM(BitSetHeader *bitset)
-{
-    return bitset->hash_num;
-}
-void SET_BITSETHEADER_HASHNUM(BitSetHeader *bitset, uint8_t hash_num)
-{
-    bitset->hash_num = hash_num;
-}
-
-uint8_t GET_BITSETHEADER_LENGTH(BitSetHeader *bitset)
-{
-    return bitset->length;
-}
-void SET_BITSETHEADER_LENGTH(BitSetHeader *bitset, uint32_t length)
-{
-    bitset->length = length;
-}*/
-
 /*
  *  API.
  */
@@ -307,7 +280,7 @@ int MightContainNumber(BloomFilter *bf, double sn);
  *  ok          : 0->fail. 1->ok.
  */
 
-//int PutStrNumber(BloomFilter *bf, StrNumber sn);
+int PutStrNumber(BloomFilter *bf, StrNumber sn);
 
 /*
  * @Description : Put a double element into bloom.

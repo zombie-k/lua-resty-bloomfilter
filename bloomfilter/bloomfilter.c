@@ -47,7 +47,6 @@ uint64_t bitCount(uint64_t i)
 
 int BitsGet(uint64_t *data, uint64_t bit_index)
 {
-    //printf("bitsGET %lu, %lu, %lu, %lu, %lu, %lu, %lu\n", bit_index, bit_index >> 6, data[bit_index >> 6], (uint64_t) 1 << (bit_index & 63), bit_index & 63, 1 << (bit_index & 63), (data[bit_index >> 6] & ((uint64_t) 1 << (bit_index & 63))));
     return (data[bit_index >> 6] & ((uint64_t) 1 << (bit_index & 63))) != 0;
 }
 
@@ -101,7 +100,6 @@ int OptimalNumOfHash(uint64_t n, uint64_t m)
 
 uint8_t * Serialized(BloomFilter *bf)
 {
-    BitSetHeader *bitset        = NULL;
     uint64_t *data              = NULL;
     uint32_t length             = 0;
 
@@ -147,8 +145,6 @@ BloomFilter *NewBF(uint64_t expect, double fpp)
     bloomFilter->hash_func = MurmurHash3_x64_128;
     bloomFilter->bitset = bitset;
 
-    //printf("num_hash=%d, length=%d, bitcount=%llu, bit_size=%lu\n", bloomFilter->bitset->hash_num, bloomFilter->bitset->length, bloomFilter->bit_count, bit_size);
-
     return bloomFilter;
 }
 
@@ -183,8 +179,6 @@ BloomFilter *LoadBF(void *byte_array, double array_len)
     bloomFilter->hash_func = MurmurHash3_x64_128;
     bloomFilter->bitset = bitset;
 
-    //printf("num_hash=%d, length=%d, bitcount=%llu\n", bloomFilter->bitset->hash_num, bloomFilter->bitset->length, bloomFilter->bit_count);
-
     return bloomFilter;
 }
 
@@ -196,6 +190,52 @@ void DestroyBF(BloomFilter *bf)
         }
         free(bf);
     }
+}
+
+int PutStrNumber(BloomFilter *bf, StrNumber sn)
+{
+    uint8_t byte_array[8]   = {0};
+    uint64_t key            = (uint64_t)atoll((const char *)sn.str);
+    uint64_t out[2]         = {0};
+    uint64_t h1             = 0;
+    uint64_t h2             = 0;
+    uint64_t combine        = 0;
+    uint64_t bit_size       = 0;
+    int hash_num            = 0;
+    int bits_changed        = 0;
+    int res                 = 0;
+
+    if (NULL == bf) {
+        return 0;
+    }
+
+    if (NULL == bf->hash_func) {
+        return 0;
+    }
+
+    bit_size = bf->bitset->length * 64;
+    hash_num = bf->bitset->hash_num;
+
+    //little endian
+    for (int i = 0; i < 8; i++) {
+        *(byte_array + i) = (uint8_t)(key >> (i * 8));
+    }
+
+    bf->hash_func(byte_array, 8, bf->seed , out);
+
+    h1 = *out;
+    h2 = *(out + 1);
+
+    combine = h1;
+
+    for (int i = 0; i < hash_num; i++) {
+        uint64_t bit_index = (combine & INT64_MAX) % bit_size;
+        res = BitsSet(bf, bit_index);
+        bits_changed |= res;
+        combine += h2;
+    }
+
+    return bits_changed;
 }
 
 int PutUint64(BloomFilter *bf, double sn)
@@ -289,8 +329,6 @@ int MightContainStrNumber(BloomFilter *bf, StrNumber sn)
     h1 = *out;
     h2 = *(out + 1);
 
-    //printf("key:%lu, h1:%lu, h2:%lu, num_hash:%d,INT64_MAX:%lu\n", key, h1, h2, bf->bitset->hash_num, INT64_MAX);
-
     combine = h1;
 
     for (int i = 0; i < hash_num; i++) {
@@ -350,8 +388,6 @@ int MightContainNumber(BloomFilter *bf, double sn)
     bf->hash_func(byte_array, 8, bf->seed , out);
     h1 = *out;
     h2 = *(out + 1);
-
-    //printf("key:%lu, h1:%lu, h2:%lu, num_hash:%d,INT64_MAX:%lu\n", key, h1, h2, bf->bitset->hash_num, INT64_MAX);
 
     combine = h1;
 
