@@ -32,6 +32,7 @@ int main() {
     PutUint64(bf, 4501310677070684);
     is_in = MightContainNumber(bf, 4501310677070684);
     printf(">>is_in=%d\n", is_in);
+    arr = Serialized(bf);
     DestroyBF(bf);
 
     return 0;

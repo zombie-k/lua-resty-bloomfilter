@@ -43,7 +43,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../murmurhash3/murmurhash3.h"
+#include "murmurhash3.h"
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 
