@@ -100,19 +100,33 @@ int OptimalNumOfHash(uint64_t n, uint64_t m)
 
 uint8_t * Serialized(BloomFilter *bf)
 {
-    uint64_t *data              = NULL;
+    int8_t magic                = 0;
+    uint8_t hash_num            = 0;
     uint32_t length             = 0;
+    uint8_t *buf                = (uint8_t *)bf->bitset;
+    uint64_t *data              = NULL;
+    int words                   = sizeof(uint64_t);
 
     if (bf == NULL) {
         return NULL;
     }
 
     data = (uint64_t *)((void *)bf->bitset + HEADER_LEN);
+    magic = bf->bitset->magic;
+    hash_num = bf->bitset->hash_num;
     length = bf->bitset->length;
 
+    *buf = magic;
+    *(buf + 1) = hash_num;
+    BF_HTONL_ARRAY((buf + 2), length);
+
     for (int i = 0; i < length; i++) {
-        *(data + i) = BF_HTONLL( *(data + i));
+        uint64_t number = *(data + i);
+        BF_HTONLL_ARRAY((buf + HEADER_LEN + i * words), number);
     }
+
+    buf = NULL;
+    data = NULL;
 
     return (uint8_t *)bf->bitset;
 }

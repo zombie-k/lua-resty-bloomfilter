@@ -79,12 +79,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	        (((uint64_t)(x) & 0x000000000000ff00ULL) << 40) | \
 	        (((uint64_t)(x) & 0x00000000000000ffULL) << 56)))
 
+#define BF_HTONL_ARRAY(b, v) \
+    (*(uint8_t *)b) = (uint8_t)(v >> 24);          \
+    (*(uint8_t *)(b + 1)) = (uint8_t)(v >> 16);    \
+    (*(uint8_t *)(b + 2)) = (uint8_t)(v >> 8);     \
+    (*(uint8_t *)(b + 3)) = (uint8_t)(v);
+
+#define BF_HTONLL_ARRAY(b, v) \
+    (*(uint8_t *)b) = (uint8_t)(v >> 56);          \
+    (*(uint8_t *)(b + 1)) = (uint8_t)(v >> 48);    \
+    (*(uint8_t *)(b + 2)) = (uint8_t)(v >> 40);    \
+    (*(uint8_t *)(b + 3)) = (uint8_t)(v >> 32);    \
+    (*(uint8_t *)(b + 4)) = (uint8_t)(v >> 24);    \
+    (*(uint8_t *)(b + 5)) = (uint8_t)(v >> 16);    \
+    (*(uint8_t *)(b + 6)) = (uint8_t)(v >> 8);     \
+    (*(uint8_t *)(b + 7)) = (uint8_t)(v);
+
 #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 
 #define BF_NTOHL(x)        (x)
 #define BF_NTOHLL(x)       (x)
 #define BF_HTONL(x)        (x)
 #define BF_HTONLL(x)       (x)
+
+#define BF_HTONL_ARRAY(b, v) \
+        (*b = BF_HTONL(v));
+
+#define BF_HTONLL_ARRAY(b, v) \
+        (*b = BF_HTONLL(v));
 
 #else
 #error unspecified endianness
