@@ -356,9 +356,11 @@ int MightContainStrNumber(BloomFilter *bf, StrNumber sn)
         return 0;
     }
 
+    /*
     if (bf->bitset->length < 10) {
         return 0;
     }
+    */
 
     bit_size = bf->bitset->length * 64;
     hash_num = bf->bitset->hash_num;
@@ -416,9 +418,11 @@ int MightContainNumber(BloomFilter *bf, double sn)
         return 0;
     }
 
+    /*
     if (bf->bitset->length < 10) {
         return 0;
     }
+    */
 
     bit_size = bf->bitset->length * 64;
     hash_num = bf->bitset->hash_num;
