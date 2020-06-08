@@ -169,15 +169,4 @@ function _M.serialized(bf)
     return bitset, nil
 end
 
-function _M.print_barr(byte_array, array_len)
-    local buf = ""
-    buf = buf .. "["
-    for i=0, array_len-1, 1 do
-        buf = buf .. str_format("%s ", byte_array[i])
-    end
-    buf = buf:sub(1,-2) .. "]"
-
-    return buf
-end
-
 return _M
